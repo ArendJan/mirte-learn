@@ -71,7 +71,14 @@ html * {
   code * {
     font-family: monospace;
   }
+  .smaller {
+    font-size: $mainFontSize * 0.8;
+  }
+  .teklein {
+    font-size: $mainFontSize * 0.2;
+  }
 }
+
 
 // For custom effect of fragments
 .fragment.blur {

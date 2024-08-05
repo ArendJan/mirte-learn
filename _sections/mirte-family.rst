@@ -35,8 +35,15 @@ Robotics Engineering
 **MIRTE** family
 ==========================
 
-Visit the `website <http://mirte.org/>`_
+Standaard
 
+.. container:: smaller
+   
+   80% Visit the `website <http://mirte.org/>`_
+
+.. container:: teklein
+
+   Moet het nog kleiner?
 
 **MIRTE** light
 --------------------
