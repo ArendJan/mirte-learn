@@ -28,7 +28,7 @@ jobs:
           zip -r ../../revealjs.zip .
           decktape --chrome-arg=--no-sandbox ./index.html ../../slides.pdf
           cd ../../
-          soffice --infilter="impress_pdf_import" --convert-to pptx:"Impress MS PowerPoint 2007 XML" slides.pdf
+          soffice --infilter="impress_pdf_import" --convert-to pptx slides.pdf
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -50,7 +50,7 @@ jobs:
 
   deploy:
     # Add a dependency to the build job
-    needs: build
+    needs: build_pptx
     if: github.ref == 'refs/heads/main'
     permissions:
       pages: write      # to deploy to Pages
