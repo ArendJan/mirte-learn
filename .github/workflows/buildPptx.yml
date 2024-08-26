@@ -1,0 +1,83 @@
+name: Build site
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container:
+      image: althack/ros2:rolling-dev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          git config --global --add safe.directory /__w/mirte-documentation/mirte-documentation
+          sudo apt update
+          python3 -m pip install --upgrade pip
+          apt install python3-venv zip libreoffice npm -y
+          python3 -m venv sphinx-env
+          . sphinx-env/bin/activate
+          pip install -r requirements.txt
+          sudo npm cache clean -f
+          sudo npm install -g n
+          sudo n stable
+          echo '------------------'
+          npm install -g decktape
+          echo '------------------'
+          playwright install-deps
+          playwright install
+          make revealjs
+          cd _build/revealjs
+          ls -lah
+          zip -r ../../revealjs.zip .
+          echo '------------------'
+          #npm list puppeteer
+          echo '------------------'
+          decktape --chrome-arg=--no-sandbox ./index.html ../../slides.pdf
+          echo '------------------'
+          cd ../../
+          ls -lah
+          soffice --infilter="impress_pdf_import" --convert-to pptx:"Impress MS PowerPoint 2007 XML" slides.pdf
+          ls -lah
+          echo '------------------'
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            _build/revealjs
+      - name: Archive production artifacts for act
+        uses: actions/upload-artifact@v4
+        with:
+          name: act_dist
+          path: |
+            revealjs.zip
+            slides.pdf
+            slides.pptx
+      - name: Upload as a github-pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with: 
+          path: _build/revealjs
+
+  deploy:
+    # Add a dependency to the build job
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        # with:
+        #   artifact_name: dist
