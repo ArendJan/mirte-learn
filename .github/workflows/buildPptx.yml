@@ -27,49 +27,57 @@ jobs:
           npm install -g decktape
           playwright install-deps
           playwright install
+      - name: change font
+        run: |
+          sed -i '/fonts.googleapis/d' _sass/custom.scss
+          sed -i 's/Overpass/Liberation Sans Sans/g' _sass/custom.scss
+          sed -i 's/Livvic/Liberation Sans Sans/g' _sass/custom.scss
+          cat _sass/custom.scss
+      - name: Build the presentation
+        run: |
           make revealjs
           cd _build/revealjs
           zip -r ../../revealjs.zip .
           decktape --chrome-arg=--no-sandbox ./index.html ../../slides.pdf
           cd ../../
           soffice --infilter="impress_pdf_import" --convert-to pptx slides.pdf
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: |
-            _build/revealjs
+      # - name: Archive production artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: dist
+      #     path: |
+      #       _build/revealjs
       - name: Archive production artifacts for act
         uses: actions/upload-artifact@v4
         with:
           name: act_dist
           path: |
-            revealjs.zip
+            # revealjs.zip
             slides.pdf
             slides.pptx
-      - name: Upload as a github-pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with: 
-          path: _build/revealjs
+      # - name: Upload as a github-pages artifact
+      #   uses: actions/upload-pages-artifact@v3
+      #   with: 
+      #     path: _build/revealjs
 
-  deploy:
-    # Add a dependency to the build job
-    needs: build_pptx
-    if: github.ref == 'refs/heads/main'
-    permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
+  # deploy:
+  #   # Add a dependency to the build job
+  #   needs: build_pptx
+  #   if: github.ref == 'refs/heads/main'
+  #   permissions:
+  #     pages: write      # to deploy to Pages
+  #     id-token: write   # to verify the deployment originates from an appropriate source
 
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  #   # Deploy to the github-pages environment
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
 
-    # Specify runner + deployment step
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        # with:
-        #   artifact_name: dist
+  #   # Specify runner + deployment step
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4
+  #       # with:
+  #       #   artifact_name: dist
