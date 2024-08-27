@@ -30,11 +30,12 @@ jobs:
       - name: change font
         run: |
           sed -i '/fonts.googleapis/d' _sass/custom.scss
-          sed -i 's/Overpass/Liberation Sans Sans/g' _sass/custom.scss
-          sed -i 's/Livvic/Liberation Sans Sans/g' _sass/custom.scss
+          sed -i 's/Overpass/Liberation Sans/g' _sass/custom.scss
+          sed -i 's/Livvic/Liberation Sans/g' _sass/custom.scss
           cat _sass/custom.scss
       - name: Build the presentation
         run: |
+          . sphinx-env/bin/activate
           make revealjs
           cd _build/revealjs
           zip -r ../../revealjs.zip .
