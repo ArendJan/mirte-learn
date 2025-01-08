@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   build_pptx:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # container:
     #   image: althack/ros2:rolling-dev
     steps:
