@@ -35,7 +35,7 @@ Robotics Engineering
 **MIRTE** family
 ==========================
 
-Standaard
+Scroll down! 
 
 .. container:: smaller
    
